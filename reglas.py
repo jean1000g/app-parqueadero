@@ -1,5 +1,5 @@
 """Reglas de negocio: horarios, cruces de reservas, tarifas y disponibilidad."""
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 from db import get_db
 
@@ -39,6 +39,15 @@ def validar_horario(fecha, hora_inicio, hora_fin):
     return None
 
 
+def validar_consulta(fecha, desde, hasta):
+    """Devuelve True si la fecha o las horas de una consulta de disponibilidad no son válidas."""
+    try:
+        datetime.strptime(fecha, "%Y-%m-%d")
+        return a_minutos(desde) >= a_minutos(hasta)
+    except (ValueError, AttributeError):
+        return True
+
+
 def hay_cruce(id_espacio, fecha, hora_inicio, hora_fin, excluir=None):
     """R. 5-6: verifica si el espacio ya está reservado en ese horario."""
     consulta = (
@@ -60,22 +69,29 @@ def buscar_tarifa(tipo_vehiculo, tipo_vinculacion):
     ).fetchone()
 
 
-def listar_espacios(zona="", tipo_vehiculo="", estado=""):
-    """R. 4-1, 4-2 y 4-4: espacios con su estado actual, filtrables."""
+def ventana_por_defecto():
+    """Fecha y horas de consulta cuando el usuario no las indica: desde ahora, una hora."""
     ahora = datetime.now()
-    fecha, hora = ahora.strftime("%Y-%m-%d"), ahora.strftime("%H:%M")
-    ocupados_ahora = {
-        fila["id_espacio"]
+    fin = min(ahora + timedelta(hours=1), ahora.replace(hour=23, minute=59))
+    return ahora.strftime("%Y-%m-%d"), ahora.strftime("%H:%M"), fin.strftime("%H:%M")
+
+
+def listar_espacios(zona="", tipo_vehiculo="", estado="", fecha=None, desde=None, hasta=None):
+    """R. 4-1, 4-2 y 4-4: espacios con su estado en la fecha y horas consultadas, filtrables."""
+    fecha_ref, desde_ref, hasta_ref = ventana_por_defecto()
+    fecha, desde, hasta = fecha or fecha_ref, desde or desde_ref, hasta or hasta_ref
+    reservados = {
+        fila["id_espacio"]: f"{fila['hora_inicio']} a {fila['hora_fin']}"
         for fila in get_db().execute(
-            "SELECT id_espacio FROM reserva WHERE estado = 'activa' AND fecha = ?"
-            " AND hora_inicio <= ? AND hora_fin > ?",
-            (fecha, hora, hora),
+            "SELECT id_espacio, hora_inicio, hora_fin FROM reserva WHERE estado = 'activa' AND fecha = ?"
+            " AND hora_inicio < ? AND hora_fin > ? ORDER BY hora_inicio DESC",
+            (fecha, hasta, desde),
         )
     }
     resultado = []
     for espacio in get_db().execute("SELECT * FROM espacio ORDER BY zona, codigo"):
         actual = espacio["estado"]
-        if actual == "disponible" and espacio["id_espacio"] in ocupados_ahora:
+        if actual == "disponible" and espacio["id_espacio"] in reservados:
             actual = "reservado"
         if zona and espacio["zona"] != zona:
             continue
@@ -83,7 +99,8 @@ def listar_espacios(zona="", tipo_vehiculo="", estado=""):
             continue
         if estado and actual != estado:
             continue
-        resultado.append({**dict(espacio), "estado_actual": actual})
+        resultado.append({**dict(espacio), "estado_actual": actual,
+                          "horario_reservado": reservados.get(espacio["id_espacio"], "")})
     return resultado
 
 

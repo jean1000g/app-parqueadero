@@ -14,9 +14,9 @@
   {% for e in espacios %}
   <tr><td>{{ e.codigo }}</td><td>{{ e.zona }}</td><td>{{ e.tipo_vehiculo|capitalize }}</td>
       <td>{{ e.estado_actual|replace('_', ' ')|capitalize }}</td>
-      <td class="acciones"><a href="{{ url_for('admin_espacio_editar', id_espacio=e.id_espacio) }}">Modificar</a>
+      <td><div class="acciones"><a href="{{ url_for('admin_espacio_editar', id_espacio=e.id_espacio) }}">Modificar</a>
         <form method="post" action="{{ url_for('admin_espacio_eliminar', id_espacio=e.id_espacio) }}" onsubmit="return confirm('¿Eliminar este espacio?')">
-          <button class="enlace">Eliminar</button></form></td></tr>
+          <button class="enlace">Eliminar</button></form></div></td></tr>
   {% endfor %}
 </table>
 {% endblock %}

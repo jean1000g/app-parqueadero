@@ -177,9 +177,17 @@ def create_app(config=None):
     @login_requerido
     def disponibilidad():
         filtros = {c: request.args.get(c, "") for c in ("zona", "tipo_vehiculo", "estado")}
-        espacios = reglas.listar_espacios(**filtros)
+        fecha, desde, hasta = reglas.ventana_por_defecto()
+        fecha = request.args.get("fecha") or fecha
+        desde = request.args.get("desde") or desde
+        hasta = request.args.get("hasta") or hasta
+        if reglas.validar_consulta(fecha, desde, hasta):
+            flash("Revisa la fecha y las horas: la hora final debe ser posterior a la inicial.", "error")
+            fecha, desde, hasta = reglas.ventana_por_defecto()
+        espacios = reglas.listar_espacios(**filtros, fecha=fecha, desde=desde, hasta=hasta)
         zonas = [f["zona"] for f in get_db().execute("SELECT DISTINCT zona FROM espacio ORDER BY zona")]
-        return render_template("disponibilidad.html", espacios=espacios, filtros=filtros, zonas=zonas)
+        return render_template("disponibilidad.html", espacios=espacios, filtros=filtros, zonas=zonas,
+                               fecha=fecha, desde=desde, hasta=hasta)
 
     @app.route("/informacion")
     @login_requerido
@@ -205,21 +213,26 @@ def create_app(config=None):
                 error = "Ese espacio está fuera de servicio."
             if error is None and tarifa is None:
                 error = "No hay una tarifa vigente para tu tipo de vinculación."
-            if error is None and reglas.hay_cruce(id_espacio, fecha, inicio, fin):
-                error = "El espacio ya está reservado en ese horario."
             if error:
                 flash(error, "error")
             else:
-                valor = reglas.calcular_valor(tarifa["valor_hora"], inicio, fin)
-                codigo = "RES-" + secrets.token_hex(3).upper()
-                get_db().execute(
-                    "INSERT INTO reserva (id_usuario, id_espacio, id_tarifa, fecha, hora_inicio, hora_fin,"
-                    " codigo_confirmacion, valor_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                    (g.usuario["id_usuario"], id_espacio, tarifa["id_tarifa"], fecha, inicio, fin, codigo, valor))
-                get_db().commit()
-                flash(f"Reserva confirmada. Tu código es {codigo}.", "success")
-                return redirect(url_for("mis_reservas"))
-        return render_template("reservar.html", espacio=espacio, tarifa=tarifa, hoy=datetime.now().strftime("%Y-%m-%d"))
+                conexion = get_db()
+                conexion.execute("BEGIN IMMEDIATE")  # bloquea la base para revisar y guardar sin que otro se cruce
+                if reglas.hay_cruce(id_espacio, fecha, inicio, fin):
+                    conexion.rollback()
+                    flash("El espacio ya está reservado en ese horario. Elige otro espacio u otra hora.", "error")
+                else:
+                    valor = reglas.calcular_valor(tarifa["valor_hora"], inicio, fin)
+                    codigo = "RES-" + secrets.token_hex(3).upper()
+                    conexion.execute(
+                        "INSERT INTO reserva (id_usuario, id_espacio, id_tarifa, fecha, hora_inicio, hora_fin,"
+                        " codigo_confirmacion, valor_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                        (g.usuario["id_usuario"], id_espacio, tarifa["id_tarifa"], fecha, inicio, fin, codigo, valor))
+                    conexion.commit()
+                    flash(f"Reserva confirmada. Tu código es {codigo}.", "success")
+                    return redirect(url_for("mis_reservas"))
+        return render_template("reservar.html", espacio=espacio, tarifa=tarifa, hoy=datetime.now().strftime("%Y-%m-%d"),
+                               previo={c: request.values.get(c, "") for c in ("fecha", "desde", "hasta")})
 
     def consultar_reservas(solo_usuario=None):
         consulta = ("SELECT r.*, e.codigo AS espacio, u.nombre AS usuario FROM reserva r"

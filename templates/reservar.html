@@ -6,9 +6,9 @@
   <p>Zona {{ espacio['zona'] }} · {{ espacio['tipo_vehiculo']|capitalize }}
     {% if tarifa %}· Tarifa para ti: {{ formato_cop(tarifa['valor_hora']) }} por hora{% endif %}</p>
   <form method="post" class="formulario">
-    <label>Fecha <input type="date" name="fecha" min="{{ hoy }}" value="{{ request.form.get('fecha', hoy) }}" required></label>
-    <label>Hora de inicio <input type="time" name="hora_inicio" value="{{ request.form.get('hora_inicio', '') }}" required></label>
-    <label>Hora de fin <input type="time" name="hora_fin" value="{{ request.form.get('hora_fin', '') }}" required></label>
+    <label>Fecha <input type="date" name="fecha" min="{{ hoy }}" value="{{ request.form.get('fecha') or previo.fecha or hoy }}" required></label>
+    <label>Hora de inicio <input type="time" name="hora_inicio" value="{{ request.form.get('hora_inicio') or previo.desde }}" required></label>
+    <label>Hora de fin <input type="time" name="hora_fin" value="{{ request.form.get('hora_fin') or previo.hasta }}" required></label>
     <button class="boton">Confirmar reserva</button>
     <a class="boton secundario" href="{{ url_for('disponibilidad') }}">Volver</a>
   </form>

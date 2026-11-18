@@ -319,3 +319,46 @@ def test_reporte_sin_datos(cliente):
 def test_reporte_rango_invalido(cliente):
     entrar_admin(cliente)
     assert "no puede ser posterior" in cliente.get(f"/admin/reportes?desde={PASADO}&hasta={MANANA}").get_data(as_text=True)
+
+
+# ---- Disponibilidad por fecha y hora, y reservas sin cruces entre usuarios
+def test_espacio_reservado_se_muestra_no_disponible(cliente):
+    registrar(cliente)
+    entrar(cliente)
+    reservar(cliente, inicio="08:00", fin="11:00")
+    pagina = cliente.get(f"/disponibilidad?fecha={MANANA}&desde=09:00&hasta=10:00").get_data(as_text=True)
+    assert "espacio reservado" in pagina and "No disponible: reservado" in pagina
+    assert "08:00 a 11:00" in pagina
+
+
+def test_espacio_libre_fuera_del_horario_reservado(cliente):
+    registrar(cliente)
+    entrar(cliente)
+    reservar(cliente, inicio="08:00", fin="11:00")
+    pagina = cliente.get(f"/disponibilidad?fecha={MANANA}&desde=11:00&hasta=12:00&zona=A").get_data(as_text=True)
+    assert "espacio reservado" not in pagina
+
+
+def test_consulta_con_horas_invalidas_usa_valores_por_defecto(cliente):
+    registrar(cliente)
+    entrar(cliente)
+    pagina = cliente.get(f"/disponibilidad?fecha={MANANA}&desde=12:00&hasta=10:00").get_data(as_text=True)
+    assert "hora final debe ser posterior" in pagina
+
+
+def test_otro_usuario_no_puede_reservar_el_mismo_horario(cliente):
+    registrar(cliente)
+    entrar(cliente)
+    reservar(cliente, inicio="08:00", fin="11:00")
+    cliente.get("/logout")
+    registrar(cliente, correo="otro@uni.edu", documento="2002")
+    entrar(cliente, "otro@uni.edu")
+    assert "ya está reservado" in reservar(cliente, inicio="08:00", fin="11:00").get_data(as_text=True)
+    assert "ya está reservado" in reservar(cliente, inicio="09:00", fin="10:00").get_data(as_text=True)
+
+
+def test_reservar_precarga_fecha_y_horas_de_la_consulta(cliente):
+    registrar(cliente)
+    entrar(cliente)
+    pagina = cliente.get(f"/reservar/1?fecha={MANANA}&desde=09:00&hasta=10:00").get_data(as_text=True)
+    assert 'value="09:00"' in pagina and 'value="10:00"' in pagina

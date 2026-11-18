@@ -7,9 +7,9 @@
   {% for u in usuarios %}
   <tr><td>{{ u['nombre'] }}</td><td>{{ u['documento'] }}</td><td>{{ u['correo'] }}</td><td>{{ u['tipo_vinculacion']|capitalize }}</td>
       <td>{{ u['placa_vehiculo'] }}</td><td>{{ u['rol']|capitalize }}</td>
-      <td class="acciones"><a href="{{ url_for('admin_usuario_editar', id_usuario=u['id_usuario']) }}">Modificar</a>
+      <td><div class="acciones"><a href="{{ url_for('admin_usuario_editar', id_usuario=u['id_usuario']) }}">Modificar</a>
         <form method="post" action="{{ url_for('admin_usuario_eliminar', id_usuario=u['id_usuario']) }}" onsubmit="return confirm('¿Eliminar este usuario?')">
-          <button class="enlace">Eliminar</button></form></td></tr>
+          <button class="enlace">Eliminar</button></form></div></td></tr>
   {% endfor %}
 </table>
 {% endblock %}

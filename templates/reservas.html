@@ -10,14 +10,14 @@
     {% if admin %}<td>{{ r['usuario'] }}</td>{% endif %}
     <td>{{ r['espacio'] }}</td><td>{{ r['fecha'] }}</td><td>{{ r['hora_inicio'] }} - {{ r['hora_fin'] }}</td>
     <td>{{ formato_cop(r['valor_total']) }}</td><td>{{ r['estado']|capitalize }}</td>
-    <td class="acciones">
+    <td><div class="acciones">
       {% if r['estado'] == 'activa' %}
         {% if not admin and not pago_aprobado(r['id_reserva']) %}<a href="{{ url_for('pagar', id_reserva=r['id_reserva']) }}">Pagar</a>{% endif %}
         {% if admin %}<a href="{{ url_for('admin_reserva_editar', id_reserva=r['id_reserva']) }}">Modificar</a>{% endif %}
         <form method="post" action="{{ url_for('cancelar_reserva', id_reserva=r['id_reserva']) }}" onsubmit="return confirm('¿Cancelar esta reserva?')">
           <button class="enlace">Cancelar</button></form>
       {% endif %}
-    </td>
+    </div></td>
   </tr>
   {% else %}
   <tr><td colspan="8">No hay reservas registradas.</td></tr>

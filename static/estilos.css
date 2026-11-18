@@ -32,8 +32,11 @@ input, select { padding: 9px 10px; border: 1px solid #b8c3d4; border-radius: 8px
 .espacios { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
 .espacio { background: #fff; border: 2px solid #d5dde8; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 4px; }
 .espacio.disponible { border-color: var(--exito); }
-.espacio.reservado { border-color: var(--ambar); }
-.espacio.ocupado, .espacio.fuera_de_servicio { border-color: var(--error); }
+.espacio.reservado { border-color: var(--error); background: #fdecea; }
+.espacio.ocupado { border-color: var(--error); background: #fdecea; }
+.espacio.fuera_de_servicio { border-color: #6b7280; background: #eceff3; }
 .etiqueta { font-weight: 700; }
+.espacio.reservado .etiqueta, .espacio.ocupado .etiqueta { color: var(--error); }
+.espacio.disponible .etiqueta { color: var(--exito); }
 .nota { color: #4a5568; font-size: .9rem; }
 @media (max-width: 600px) { .tabla { font-size: .85rem; display: block; overflow-x: auto; } }
