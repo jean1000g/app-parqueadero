@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block titulo %}Reportes{% endblock %}
+{% block cuerpo %}
+<h1>Reportes de utilización</h1>
+<form method="get" class="filtros">
+  <label>Desde <input type="date" name="desde" value="{{ desde }}" required></label>
+  <label>Hasta <input type="date" name="hasta" value="{{ hasta }}" required></label>
+  <button class="boton">Generar reporte</button>
+</form>
+{% if reporte %}
+<div class="cuadricula">
+  <div class="tarjeta dato"><span class="numero">{{ reporte.total_reservas }}</span><span>reservas en el rango</span></div>
+  <div class="tarjeta dato"><span class="numero">{{ formato_cop(reporte.ingresos) }}</span><span>ingresos por pagos</span></div>
+</div>
+<h2>Ocupación por zona</h2>
+<table class="tabla">
+  <tr><th>Zona</th><th>Porcentaje de ocupación</th></tr>
+  {% for zona, porcentaje in reporte.ocupacion.items() %}<tr><td>{{ zona }}</td><td>{{ porcentaje }} %</td></tr>{% endfor %}
+</table>
+<h2>Reservas por franja horaria</h2>
+<table class="tabla">
+  <tr><th>Franja</th><th>Reservas</th></tr>
+  {% for franja, total in reporte.franjas.items() %}<tr><td>{{ franja }}</td><td>{{ total }}</td></tr>{% endfor %}
+</table>
+{% endif %}
+{% endblock %}

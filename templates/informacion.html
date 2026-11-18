@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block titulo %}Información del parqueadero{% endblock %}
+{% block cuerpo %}
+<h1>Información del parqueadero</h1>
+<section class="tarjeta">
+  <p><strong>Horario de atención:</strong> {{ apertura }} a {{ cierre }}, todos los días.</p>
+  <p><strong>Ubicación:</strong> parqueadero principal del campus universitario.</p>
+</section>
+<h2>Tarifas vigentes</h2>
+<table class="tabla">
+  <tr><th>Vehículo</th><th>Vinculación</th><th>Valor por hora</th></tr>
+  {% for t in tarifas %}
+  <tr><td>{{ t['tipo_vehiculo']|capitalize }}</td><td>{{ t['tipo_vinculacion']|capitalize }}</td><td>{{ formato_cop(t['valor_hora']) }}</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

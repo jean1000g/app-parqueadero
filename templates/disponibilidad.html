@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block titulo %}Disponibilidad{% endblock %}
+{% block cuerpo %}
+<h1>Disponibilidad de espacios</h1>
+<form method="get" class="filtros">
+  <label>Zona
+    <select name="zona"><option value="">Todas</option>
+      {% for z in zonas %}<option value="{{ z }}" {{ 'selected' if filtros.zona == z else '' }}>{{ z }}</option>{% endfor %}
+    </select></label>
+  <label>Vehículo
+    <select name="tipo_vehiculo"><option value="">Todos</option>
+      {% for t in TIPOS_VEHICULO %}<option value="{{ t }}" {{ 'selected' if filtros.tipo_vehiculo == t else '' }}>{{ t|capitalize }}</option>{% endfor %}
+    </select></label>
+  <label>Estado
+    <select name="estado"><option value="">Todos</option>
+      {% for e in ESTADOS_ESPACIO %}<option value="{{ e }}" {{ 'selected' if filtros.estado == e else '' }}>{{ e|replace('_', ' ')|capitalize }}</option>{% endfor %}
+    </select></label>
+  <button class="boton">Filtrar</button>
+</form>
+<div class="cuadricula espacios">
+  {% for e in espacios %}
+  <div class="espacio {{ e.estado_actual }}">
+    <strong>{{ e.codigo }}</strong>
+    <span>Zona {{ e.zona }} · {{ e.tipo_vehiculo|capitalize }}</span>
+    <span class="etiqueta">{{ e.estado_actual|replace('_', ' ')|capitalize }}</span>
+    {% if e.estado != 'fuera_de_servicio' %}<a href="{{ url_for('reservar', id_espacio=e.id_espacio) }}">Reservar</a>{% endif %}
+  </div>
+  {% else %}
+  <p>No hay espacios que coincidan con los filtros.</p>
+  {% endfor %}
+</div>
+{% endblock %}

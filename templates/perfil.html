@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block titulo %}Mi perfil{% endblock %}
+{% block cuerpo %}
+<section class="tarjeta angosta">
+  <h1>Mis datos y los de mi vehículo</h1>
+  <form method="post" class="formulario">
+    {% set datos = usuario_actual %}
+    {% include '_campos_usuario.html' %}
+    <button class="boton">Guardar cambios</button>
+  </form>
+</section>
+{% endblock %}

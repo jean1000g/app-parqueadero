@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block titulo %}Iniciar sesión{% endblock %}
+{% block cuerpo %}
+<section class="tarjeta angosta">
+  <h1>Iniciar sesión</h1>
+  <form method="post" class="formulario">
+    <label>Correo <input type="email" name="correo" required></label>
+    <label>Contraseña <input type="password" name="contrasena" required></label>
+    <button class="boton">Ingresar</button>
+  </form>
+  <p><a href="{{ url_for('registro') }}">Crear una cuenta</a> · <a href="{{ url_for('recuperar') }}">Olvidé mi contraseña</a></p>
+</section>
+{% endblock %}

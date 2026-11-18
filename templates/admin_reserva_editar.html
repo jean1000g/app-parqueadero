@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block titulo %}Modificar reserva{% endblock %}
+{% block cuerpo %}
+<section class="tarjeta angosta">
+  <h1>Modificar la reserva {{ reserva['codigo_confirmacion'] }}</h1>
+  <form method="post" class="formulario">
+    <label>Fecha <input type="date" name="fecha" value="{{ request.form.get('fecha', reserva['fecha']) }}" required></label>
+    <label>Hora de inicio <input type="time" name="hora_inicio" value="{{ request.form.get('hora_inicio', reserva['hora_inicio']) }}" required></label>
+    <label>Hora de fin <input type="time" name="hora_fin" value="{{ request.form.get('hora_fin', reserva['hora_fin']) }}" required></label>
+    <button class="boton">Guardar</button>
+    <a class="boton secundario" href="{{ url_for('admin_reservas') }}">Volver</a>
+  </form>
+</section>
+{% endblock %}

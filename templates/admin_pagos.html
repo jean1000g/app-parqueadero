@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block titulo %}Pagos{% endblock %}
+{% block cuerpo %}
+<h1>Pagos registrados</h1>
+<table class="tabla">
+  <tr><th>Usuario</th><th>Reserva</th><th>Monto</th><th>Estado</th><th>Fecha</th><th>Comprobante</th></tr>
+  {% for p in pagos %}
+  <tr><td>{{ p['nombre'] }}</td><td>{{ p['codigo_confirmacion'] }}</td><td>{{ formato_cop(p['monto']) }}</td>
+      <td>{{ p['estado']|capitalize }}</td><td>{{ p['fecha_pago'] }}</td><td>{{ p['comprobante'] }}</td></tr>
+  {% else %}<tr><td colspan="6">Aún no hay pagos registrados.</td></tr>{% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block titulo %}Modificar usuario{% endblock %}
+{% block cuerpo %}
+<section class="tarjeta angosta">
+  <h1>Modificar usuario</h1>
+  <form method="post" class="formulario">
+    {% set datos = usuario %}
+    {% include '_campos_usuario.html' %}
+    <label>Rol
+      <select name="rol">
+        <option value="usuario" {{ 'selected' if usuario['rol'] == 'usuario' else '' }}>Usuario</option>
+        <option value="administrador" {{ 'selected' if usuario['rol'] == 'administrador' else '' }}>Administrador</option>
+      </select></label>
+    <button class="boton">Guardar</button>
+    <a class="boton secundario" href="{{ url_for('admin_usuarios') }}">Volver</a>
+  </form>
+</section>
+{% endblock %}

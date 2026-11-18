@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block titulo %}Mi panel{% endblock %}
+{% block cuerpo %}
+<h1>Hola, {{ usuario_actual['nombre'] }}</h1>
+<div class="cuadricula">
+  <div class="tarjeta dato"><span class="numero">{{ libres }}</span><span>espacios disponibles ahora</span></div>
+  <div class="tarjeta dato"><span class="numero">{{ reservas_activas }}</span><span>reservas activas</span></div>
+</div>
+<p><a class="boton" href="{{ url_for('disponibilidad') }}">Ver disponibilidad y reservar</a></p>
+{% endblock %}

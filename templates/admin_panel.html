@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block titulo %}Panel del administrador{% endblock %}
+{% block cuerpo %}
+<h1>Panel del administrador</h1>
+<div class="cuadricula">
+  <div class="tarjeta dato"><span class="numero">{{ conteos['usuario'] }}</span><span>usuarios</span></div>
+  <div class="tarjeta dato"><span class="numero">{{ conteos['espacio'] }}</span><span>espacios</span></div>
+  <div class="tarjeta dato"><span class="numero">{{ conteos['reserva'] }}</span><span>reservas</span></div>
+  <div class="tarjeta dato"><span class="numero">{{ conteos['pago'] }}</span><span>pagos</span></div>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block titulo %}Modificar espacio{% endblock %}
+{% block cuerpo %}
+<section class="tarjeta angosta">
+  <h1>Modificar el espacio {{ espacio['codigo'] }}</h1>
+  <form method="post" class="formulario">
+    <label>Zona <input name="zona" value="{{ espacio['zona'] }}" required></label>
+    <label>Vehículo
+      <select name="tipo_vehiculo">{% for t in TIPOS_VEHICULO %}
+        <option value="{{ t }}" {{ 'selected' if espacio['tipo_vehiculo'] == t else '' }}>{{ t|capitalize }}</option>{% endfor %}</select></label>
+    <label>Estado
+      <select name="estado">{% for e in ESTADOS_ESPACIO %}
+        <option value="{{ e }}" {{ 'selected' if espacio['estado'] == e else '' }}>{{ e|replace('_', ' ')|capitalize }}</option>{% endfor %}</select></label>
+    <button class="boton">Guardar</button>
+    <a class="boton secundario" href="{{ url_for('admin_espacios') }}">Volver</a>
+  </form>
+</section>
+{% endblock %}

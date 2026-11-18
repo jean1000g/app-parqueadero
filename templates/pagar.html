@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block titulo %}Pagar reserva{% endblock %}
+{% block cuerpo %}
+<section class="tarjeta angosta">
+  <h1>Pagar la reserva {{ reserva['codigo_confirmacion'] }}</h1>
+  <p>Valor a pagar: <strong>{{ formato_cop(reserva['valor_total']) }}</strong></p>
+  <p class="nota">Pago simulado: no se conecta con entidades financieras reales. Una tarjeta terminada en 0000 simula un rechazo.</p>
+  <form method="post" class="formulario">
+    <label>Número de tarjeta (simulado) <input name="tarjeta" inputmode="numeric" required></label>
+    <button class="boton">Pagar</button>
+    <a class="boton secundario" href="{{ url_for('mis_reservas') }}">Volver</a>
+  </form>
+</section>
+{% endblock %}

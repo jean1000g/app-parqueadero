@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Parqueadero Universitario{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+</head>
+<body>
+<header class="encabezado">
+  <a class="marca" href="{{ url_for('inicio') }}">P · Gestión de Parqueaderos</a>
+  {% if usuario_actual %}
+  <nav class="menu">
+    {% if usuario_actual['rol'] == 'administrador' %}
+      <a href="{{ url_for('admin_panel') }}">Inicio</a>
+      <a href="{{ url_for('admin_usuarios') }}">Usuarios</a>
+      <a href="{{ url_for('admin_espacios') }}">Espacios</a>
+      <a href="{{ url_for('admin_reservas') }}">Reservas</a>
+      <a href="{{ url_for('admin_tarifas') }}">Tarifas</a>
+      <a href="{{ url_for('admin_pagos') }}">Pagos</a>
+      <a href="{{ url_for('admin_reportes') }}">Reportes</a>
+    {% else %}
+      <a href="{{ url_for('panel') }}">Inicio</a>
+      <a href="{{ url_for('disponibilidad') }}">Disponibilidad</a>
+      <a href="{{ url_for('informacion') }}">Información</a>
+      <a href="{{ url_for('mis_reservas') }}">Mis reservas</a>
+      <a href="{{ url_for('historial') }}">Historial</a>
+      <a href="{{ url_for('perfil') }}">Perfil</a>
+    {% endif %}
+    <a class="salir" href="{{ url_for('logout') }}">Cerrar sesión</a>
+  </nav>
+  {% endif %}
+</header>
+<main class="contenido">
+  {% with mensajes = get_flashed_messages(with_categories=true) %}
+    {% for categoria, mensaje in mensajes %}
+      <div class="aviso {{ categoria }}">{{ mensaje }}</div>
+    {% endfor %}
+  {% endwith %}
+  {% block cuerpo %}{% endblock %}
+</main>
+<footer class="pie">Sistema Inteligente de Gestión de Parqueaderos · Ingeniería del Software 2026-2</footer>
+</body>
+</html>

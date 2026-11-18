@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block titulo %}Tarifas{% endblock %}
+{% block cuerpo %}
+<h1>Tarifas</h1>
+<form method="post" class="filtros">
+  <label>Vehículo
+    <select name="tipo_vehiculo">{% for t in TIPOS_VEHICULO %}<option value="{{ t }}">{{ t|capitalize }}</option>{% endfor %}</select></label>
+  <label>Vinculación
+    <select name="tipo_vinculacion">{% for t in TIPOS_VINCULACION %}<option value="{{ t }}">{{ t|capitalize }}</option>{% endfor %}</select></label>
+  <label>Valor por hora (COP) <input type="number" name="valor_hora" min="1" required></label>
+  <button class="boton">Registrar o modificar tarifa</button>
+</form>
+<table class="tabla">
+  <tr><th>Vehículo</th><th>Vinculación</th><th>Valor por hora</th></tr>
+  {% for t in tarifas %}
+  <tr><td>{{ t['tipo_vehiculo']|capitalize }}</td><td>{{ t['tipo_vinculacion']|capitalize }}</td><td>{{ formato_cop(t['valor_hora']) }}</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,14 @@
+<label>Nombre completo
+  <input name="nombre" value="{{ datos['nombre'] if datos else '' }}" required></label>
+<label>Documento
+  <input name="documento" value="{{ datos['documento'] if datos else '' }}" required></label>
+<label>Correo
+  <input type="email" name="correo" value="{{ datos['correo'] if datos else '' }}" required></label>
+<label>Tipo de vinculación
+  <select name="tipo_vinculacion">
+    {% for t in TIPOS_VINCULACION %}
+    <option value="{{ t }}" {{ 'selected' if datos and datos['tipo_vinculacion'] == t else '' }}>{{ t|capitalize }}</option>
+    {% endfor %}
+  </select></label>
+<label>Placa del vehículo
+  <input name="placa_vehiculo" value="{{ datos['placa_vehiculo'] if datos else '' }}" required></label>

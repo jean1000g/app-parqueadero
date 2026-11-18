@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block titulo %}Espacios{% endblock %}
+{% block cuerpo %}
+<h1>Espacios de parqueadero</h1>
+<form method="post" class="filtros">
+  <label>Código <input name="codigo" placeholder="A-07" required></label>
+  <label>Zona <input name="zona" placeholder="A" required></label>
+  <label>Vehículo
+    <select name="tipo_vehiculo">{% for t in TIPOS_VEHICULO %}<option value="{{ t }}">{{ t|capitalize }}</option>{% endfor %}</select></label>
+  <button class="boton">Registrar espacio</button>
+</form>
+<table class="tabla">
+  <tr><th>Código</th><th>Zona</th><th>Vehículo</th><th>Estado actual</th><th>Acciones</th></tr>
+  {% for e in espacios %}
+  <tr><td>{{ e.codigo }}</td><td>{{ e.zona }}</td><td>{{ e.tipo_vehiculo|capitalize }}</td>
+      <td>{{ e.estado_actual|replace('_', ' ')|capitalize }}</td>
+      <td class="acciones"><a href="{{ url_for('admin_espacio_editar', id_espacio=e.id_espacio) }}">Modificar</a>
+        <form method="post" action="{{ url_for('admin_espacio_eliminar', id_espacio=e.id_espacio) }}" onsubmit="return confirm('¿Eliminar este espacio?')">
+          <button class="enlace">Eliminar</button></form></td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

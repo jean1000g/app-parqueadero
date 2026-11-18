@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block titulo %}Historial{% endblock %}
+{% block cuerpo %}
+<h1>Historial de reservas y pagos</h1>
+<h2>Reservas</h2>
+<table class="tabla">
+  <tr><th>Código</th><th>Espacio</th><th>Fecha</th><th>Horario</th><th>Valor</th><th>Estado</th></tr>
+  {% for r in reservas %}
+  <tr><td>{{ r['codigo_confirmacion'] }}</td><td>{{ r['espacio'] }}</td><td>{{ r['fecha'] }}</td>
+      <td>{{ r['hora_inicio'] }} - {{ r['hora_fin'] }}</td><td>{{ formato_cop(r['valor_total']) }}</td><td>{{ r['estado']|capitalize }}</td></tr>
+  {% else %}<tr><td colspan="6">Aún no tienes reservas.</td></tr>{% endfor %}
+</table>
+<h2>Pagos y comprobantes</h2>
+<table class="tabla">
+  <tr><th>Reserva</th><th>Monto</th><th>Estado</th><th>Fecha</th><th>Comprobante</th></tr>
+  {% for p in pagos %}
+  <tr><td>{{ p['codigo_confirmacion'] }}</td><td>{{ formato_cop(p['monto']) }}</td><td>{{ p['estado']|capitalize }}</td>
+      <td>{{ p['fecha_pago'] }}</td><td>{{ p['comprobante'] }}</td></tr>
+  {% else %}<tr><td colspan="5">Aún no tienes pagos.</td></tr>{% endfor %}
+</table>
+{% endblock %}
